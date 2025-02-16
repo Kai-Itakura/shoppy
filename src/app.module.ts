@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
+import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -17,10 +18,16 @@ import { UserModule } from './user/user.module';
               : {
                   target: 'pino-pretty',
                   options: {
-                    singleLine: true,
+                    singleLine: false,
                   },
                 },
-            level: isProduction ? 'info' : 'debug',
+            level: isProduction ? 'info' : 'trace',
+            serializers: {
+              req(req) {
+                req.body = req.raw.body;
+                return req;
+              },
+            },
           },
         };
       },
@@ -28,6 +35,7 @@ import { UserModule } from './user/user.module';
     }),
     ConfigModule.forRoot(),
     UserModule,
+    PrismaModule,
   ],
   controllers: [],
   providers: [],
