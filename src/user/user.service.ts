@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -29,5 +29,11 @@ export class UserService {
         throw new ConflictException('Email already exists');
       }
     }
+  }
+
+  async getUser(filter: Prisma.UserWhereUniqueInput): Promise<User> {
+    return this.prismaService.user.findUniqueOrThrow({
+      where: filter,
+    });
   }
 }
