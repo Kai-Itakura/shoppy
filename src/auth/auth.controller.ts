@@ -30,7 +30,7 @@ export class AuthController {
       now.getMilliseconds() +
       ms(this.configService.getOrThrow<StringValue>('JWT_EXPIRATION'));
 
-    res.cookie('Authentication', token, {
+    res.cookie(this.configService.get('COOKIE_NAME'), token, {
       secure: true,
       httpOnly: true,
       maxAge,
@@ -42,7 +42,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getMe(@CurrentUser() user: TokenPayload) {
-    console.log('🔥 ~ AuthController ~ getMe ~ user:', user);
     return user;
   }
 }
