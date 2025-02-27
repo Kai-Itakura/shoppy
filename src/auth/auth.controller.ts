@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
 import { Response } from 'express';
@@ -18,6 +26,7 @@ export class AuthController {
   ) {}
 
   @UseGuards(LocalAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(
     @CurrentUser() user: User,
@@ -32,6 +41,7 @@ export class AuthController {
 
     res.cookie(this.configService.get('COOKIE_NAME'), token, {
       secure: true,
+      sameSite: 'none',
       httpOnly: true,
       maxAge,
     });
