@@ -19,4 +19,10 @@ export class ProductsService {
       },
     });
   }
+
+  async getProDucts(payload: TokenPayload): Promise<Product[]> {
+    return this.prismaService.product.findMany({
+      where: { userId: payload.userId },
+    });
+  }
 }
