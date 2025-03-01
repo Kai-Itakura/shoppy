@@ -3,6 +3,9 @@ import { IsNumber, IsString } from 'class-validator';
 
 export class ReturnProductDto {
   @IsString()
+  id: string;
+
+  @IsString()
   name: string;
 
   @IsString()
@@ -10,9 +13,6 @@ export class ReturnProductDto {
 
   @IsNumber()
   price: string;
-
-  @Exclude()
-  id: string;
 
   @Exclude()
   userId: string;
