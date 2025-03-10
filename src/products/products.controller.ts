@@ -11,13 +11,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Product } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { TokenPayload } from 'src/auth/strategy/interfaces/token-payload.interface';
+import { CreateProductReturnDto } from './dto/create-product-return.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ReturnProductDto } from './dto/return-product.dto';
 import { ProductsService } from './products.service';
@@ -31,8 +31,9 @@ export class ProductsController {
   async createProduct(
     @Body() dto: CreateProductDto,
     @CurrentUser() payload: TokenPayload,
-  ): Promise<Product> {
-    return this.productsService.createProduct(dto, payload);
+  ): Promise<CreateProductReturnDto> {
+    const newProduct = await this.productsService.createProduct(dto, payload);
+    return plainToInstance(CreateProductReturnDto, newProduct);
   }
 
   @Get()
@@ -50,11 +51,12 @@ export class ProductsController {
     FileInterceptor('image', {
       storage: diskStorage({
         destination: 'public/products',
-        filename: (req, file, callback) =>
+        filename: (req, file, callback) => {
           callback(
             null,
             `${req.params.productId}${extname(file.originalname)}`,
-          ),
+          );
+        },
       }),
     }),
   )
