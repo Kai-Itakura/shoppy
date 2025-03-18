@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { LoggerModule } from 'nestjs-pino';
-import { PrismaModule } from './prisma/prisma.module';
-import { UserModule } from './user/user.module';
+import path from 'path';
 import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
 import { ProductsModule } from './products/products.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -34,6 +36,9 @@ import { ProductsModule } from './products/products.module';
         };
       },
       inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', 'public'),
     }),
     ConfigModule.forRoot(),
     UserModule,
