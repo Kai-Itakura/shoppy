@@ -4,7 +4,9 @@ import {
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
+  ParseIntPipe,
   Post,
   UploadedFile,
   UseGuards,
@@ -40,17 +42,26 @@ export class ProductsController {
   async getProducts(
     @CurrentUser() payload: TokenPayload,
   ): Promise<ReturnProductDto[]> {
-    const products = await this.productsService.getProDucts(payload);
+    const products = await this.productsService.getProDucts(payload.userId);
     return products.map((product) =>
       plainToInstance(ReturnProductDto, product),
     );
+  }
+
+  @Get(':productId')
+  async getProduct(
+    @CurrentUser() payload: TokenPayload,
+    @Param('productId', ParseIntPipe) productId: number,
+  ): Promise<ReturnProductDto> {
+    const product = this.productsService.getProduct(payload.userId, productId);
+    return plainToInstance(ReturnProductDto, product);
   }
 
   @Post(':productId/image')
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: 'public/products',
+        destination: 'public/images/products',
         filename: (req, file, callback) => {
           callback(
             null,

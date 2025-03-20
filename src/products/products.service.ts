@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Product } from '@prisma/client';
 import { TokenPayload } from 'src/auth/strategy/interfaces/token-payload.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -20,9 +20,22 @@ export class ProductsService {
     });
   }
 
-  async getProDucts(payload: TokenPayload): Promise<Product[]> {
+  async getProDucts(userId: number): Promise<Product[]> {
     return this.prismaService.product.findMany({
-      where: { userId: payload.userId },
+      where: { userId },
     });
+  }
+
+  async getProduct(userId: number, productId: number): Promise<Product> {
+    const product = await this.prismaService.product.findUnique({
+      where: {
+        userId,
+        id: productId,
+      },
+    });
+
+    if (!product) throw new ForbiddenException('Product not found!');
+
+    return product;
   }
 }
