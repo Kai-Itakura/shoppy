@@ -34,10 +34,9 @@ export class AuthController {
   ): Promise<ResponseMessage> {
     const token = await this.authService.login(user);
 
-    const now = new Date();
-    const maxAge =
-      now.getMilliseconds() +
-      ms(this.configService.getOrThrow<StringValue>('JWT_EXPIRATION'));
+    const maxAge = ms(
+      this.configService.getOrThrow<StringValue>('JWT_EXPIRATION'),
+    );
 
     res.cookie(this.configService.get('COOKIE_NAME'), token, {
       secure: true,
