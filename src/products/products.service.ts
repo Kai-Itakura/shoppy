@@ -20,10 +20,11 @@ export class ProductsService {
     });
   }
 
-  async getProDucts(userId: number): Promise<Product[]> {
-    return this.prismaService.product.findMany({
-      where: { userId },
-    });
+  async getProDucts(userId: number, status?: string): Promise<Product[]> {
+    const args: Prisma.ProductFindManyArgs = { where: { userId } };
+    if (status === 'available') args.where = { sold: false };
+
+    return this.prismaService.product.findMany(args);
   }
 
   async getProduct(userId: number, productId: number): Promise<Product> {

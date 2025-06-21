@@ -8,6 +8,7 @@ import {
   ParseFilePipe,
   ParseIntPipe,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -41,8 +42,12 @@ export class ProductsController {
   @Get()
   async getProducts(
     @CurrentUser() payload: TokenPayload,
+    @Query('status') status?: string,
   ): Promise<ReturnProductDto[]> {
-    const products = await this.productsService.getProDucts(payload.userId);
+    const products = await this.productsService.getProDucts(
+      payload.userId,
+      status,
+    );
     return products.map((product) =>
       plainToInstance(ReturnProductDto, product),
     );
