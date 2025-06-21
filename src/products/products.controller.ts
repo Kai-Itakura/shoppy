@@ -78,10 +78,13 @@ export class ProductsController {
           new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }),
           new FileTypeValidator({
             fileType: 'image/jpeg',
+            skipMagicNumbersValidation: true,
           }),
         ],
       }),
     )
     _file: Express.Multer.File,
-  ) {}
+  ) {
+    return { message: 'Successfully upload image!' };
+  }
 }

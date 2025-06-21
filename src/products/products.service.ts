@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Product } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
 import { TokenPayload } from 'src/auth/strategy/interfaces/token-payload.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -37,5 +37,15 @@ export class ProductsService {
     if (!product) throw new ForbiddenException('Product not found!');
 
     return product;
+  }
+
+  async updateProduct(
+    productId: number,
+    data: Prisma.ProductUpdateInput,
+  ): Promise<void> {
+    await this.prismaService.product.update({
+      where: { id: productId },
+      data,
+    });
   }
 }
