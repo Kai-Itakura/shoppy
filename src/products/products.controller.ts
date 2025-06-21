@@ -44,7 +44,7 @@ export class ProductsController {
     @CurrentUser() payload: TokenPayload,
     @Query('status') status?: string,
   ): Promise<ReturnProductDto[]> {
-    const products = await this.productsService.getProDucts(
+    const products = await this.productsService.getProducts(
       payload.userId,
       status,
     );

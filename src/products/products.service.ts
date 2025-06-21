@@ -3,24 +3,32 @@ import { Prisma, Product } from '@prisma/client';
 import { TokenPayload } from 'src/auth/strategy/interfaces/token-payload.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { ProductsGateway } from './products.gateway';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly productsGateway: ProductsGateway,
+  ) {}
 
   async createProduct(
     dto: CreateProductDto,
     payload: TokenPayload,
   ): Promise<Product> {
-    return this.prismaService.product.create({
+    const product = await this.prismaService.product.create({
       data: {
         ...dto,
         userId: payload.userId,
       },
     });
+
+    this.productsGateway.handleProductUpdated();
+
+    return product;
   }
 
-  async getProDucts(userId: number, status?: string): Promise<Product[]> {
+  async getProducts(userId: number, status?: string): Promise<Product[]> {
     const args: Prisma.ProductFindManyArgs = { where: { userId } };
     if (status === 'available') args.where = { sold: false };
 
@@ -48,5 +56,7 @@ export class ProductsService {
       where: { id: productId },
       data,
     });
+
+    this.productsGateway.handleProductUpdated();
   }
 }
