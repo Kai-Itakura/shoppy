@@ -34,4 +34,8 @@ export class AuthService {
 
     return token;
   }
+
+  verifyToken(jwt: string) {
+    this.jwtService.verify(jwt);
+  }
 }
