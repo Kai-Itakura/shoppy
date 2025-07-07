@@ -4,10 +4,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { LoggerModule } from 'nestjs-pino';
 import path from 'path';
 import { AuthModule } from './auth/auth.module';
+import { CheckoutModule } from './checkout/checkout.module';
+import { HealthController } from './health.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProductsModule } from './products/products.module';
 import { UserModule } from './user/user.module';
-import { CheckoutModule } from './checkout/checkout.module';
 
 @Module({
   imports: [
@@ -48,7 +49,7 @@ import { CheckoutModule } from './checkout/checkout.module';
     ProductsModule,
     CheckoutModule,
   ],
-  controllers: [],
+  controllers: [HealthController],
   providers: [],
 })
 export class AppModule {}
